@@ -48,6 +48,10 @@
 /******************************************************************************
 **                      Global Macro Definitions                             **
 ******************************************************************************/
+#define RTE_OK 1         //violet
+#define RTE_NOT_OK 0     //violet
+#define RET_TYPE boolean //violet
+
 #define PLATFORM_VENDOR_ID        (17u)
 #define PLATFORM_AR_RELEASE_MAJOR_VERSION (4u)
 #define PLATFORM_AR_RELEASE_MINOR_VERSION (2u)
