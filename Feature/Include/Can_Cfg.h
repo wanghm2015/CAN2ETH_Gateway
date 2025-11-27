@@ -782,8 +782,8 @@ typedef struct
     IfxCan_Filter canFilter;                                /* CAN filter configuration structure                   */
     IfxCan_Message txMsg;                                   /* Transmitted CAN message structure                    */
     IfxCan_Message rxMsg;                                   /* Received CAN message structure                       */
-    uint8 txData[McmCan0_Node0_TX_PDU_COUNT];                /* Transmitted CAN data array                           */
-    uint8 rxData[McmCan0_Node0_RX_PDU_COUNT];                /* Received CAN data array                              */
+    uint8 txData[Can_Data_Length];                /* Transmitted CAN data array                           */
+    uint8 rxData[Can_Data_Length];                /* Received CAN data array                              */
 } McmcanType;
 
 typedef struct
