@@ -677,6 +677,7 @@ Public License instead of this License.  But first, please read
 /*********************************************************************************************************************/
 #include "IfxCan_Can.h"
 #include "Platform_Types.h"
+#include "can2eth_types.h"
 
 #include "Can.h"
 #include "Can_Cfg.h"
@@ -711,21 +712,116 @@ void MCMCAN_Can_initModule(IfxCan_Can *can, IfxCan_Can_Config *config)
     }
 }
 
-void MCMCAN_Can_initNodeConfig(IfxCan_Can_NodeConfig *config, IfxCan_Can *can)
+void MCMCAN_Can_initNodeConfig(IfxCan_Can_NodeConfig *config, IfxCan_Can *can, IfxCan_Can_NodeConfig * IfxCan_Can_NodeConfig_Par)
 {
-  *config = MCMCAN0_Node_Config;
+  config = IfxCan_Can_NodeConfig_Par;
   config->can = can->can;
 }
 
-RET_TYPE Can_Init(void)
+RET_TYPE McmCan0_Node0_Init(void)
 {
   RET_TYPE ret = RTE_OK;
 
-  MCMCAN_Moudle_Init(&MCMCAN_0.MCMCAN_node0.MCMCAN_Node_Config.canConfig, MCMCAN_0.base_addr);
-  MCMCAN_Can_initModule(&MCMCAN_0.MCMCAN_node0.MCMCAN_Node_Config.canModule, &MCMCAN_0.MCMCAN_node0.MCMCAN_Node_Config.canConfig);
-  MCMCAN_Can_initNodeConfig(&MCMCAN_0.MCMCAN_node0.MCMCAN_Node_Config.canNodeConfig, &MCMCAN_0.MCMCAN_node0.MCMCAN_Node_Config.canModule);
+  #if (MCMCAN0_NODE0 == CAN_ENABLE)
+  if (MCMCAN_0.MCMCAN_node0 == NULL)
+  {
+    ret = RTE_NOT_OK;
+  }
+  else
+  {
+    McmcanType * MCMCAN_Node_Config_Ptr = MCMCAN_0.MCMCAN_node0->MCMCAN_Node_Config;
 
-  ret = IfxCan_Can_initNode(&MCMCAN_0.MCMCAN_node0.MCMCAN_Node_Config.canSrcNode, &MCMCAN_0.MCMCAN_node0.MCMCAN_Node_Config.canNodeConfig);
+    MCMCAN_Moudle_Init(&MCMCAN_Node_Config_Ptr->canConfig, MCMCAN_0.base_addr);
+    MCMCAN_Can_initModule(&MCMCAN_Node_Config_Ptr->canModule, &MCMCAN_Node_Config_Ptr->canConfig);
+    MCMCAN_Can_initNodeConfig(&MCMCAN_Node_Config_Ptr->canNodeConfig, &MCMCAN_Node_Config_Ptr->canModule, &MCMCAN0_Node0_Config);
 
+    ret = IfxCan_Can_initNode(&(MCMCAN_Node_Config_Ptr->canSrcNode), &MCMCAN_Node_Config_Ptr->canNodeConfig);
+  }
+  #endif
+  
+  return ret;
+}
+
+RET_TYPE McmCan0_Node1_Init(void)
+{
+  RET_TYPE ret = RTE_OK;
+
+  #if (MCMCAN0_NODE1 == CAN_ENABLE)
+  if (MCMCAN_0.MCMCAN_node1 == NULL)
+  {
+    ret = RTE_NOT_OK;
+  }
+  else
+  {
+    McmcanType * MCMCAN_Node_Config_Ptr = MCMCAN_0.MCMCAN_node1->MCMCAN_Node_Config;
+
+    MCMCAN_Moudle_Init(&MCMCAN_Node_Config_Ptr->canConfig, MCMCAN_0.base_addr);
+    MCMCAN_Can_initModule(&MCMCAN_Node_Config_Ptr->canModule, &MCMCAN_Node_Config_Ptr->canConfig);
+    MCMCAN_Can_initNodeConfig(&MCMCAN_Node_Config_Ptr->canNodeConfig, &MCMCAN_Node_Config_Ptr->canModule, &MCMCAN0_Node1_Config);
+
+    ret = IfxCan_Can_initNode(&(MCMCAN_Node_Config_Ptr->canSrcNode), &MCMCAN_Node_Config_Ptr->canNodeConfig);
+  }
+  #endif
+  
+  return ret;
+}
+
+RET_TYPE McmCan0_Node2_Init(void)
+{
+  RET_TYPE ret = RTE_OK;
+
+  #if (MCMCAN0_NODE2 == CAN_ENABLE)
+  if (MCMCAN_0.MCMCAN_node2 == NULL)
+  {
+    ret = RTE_NOT_OK;
+  }
+  else
+  {
+    McmcanType * MCMCAN_Node_Config_Ptr = MCMCAN_0.MCMCAN_node2->MCMCAN_Node_Config;
+
+    MCMCAN_Moudle_Init(&MCMCAN_Node_Config_Ptr->canConfig, MCMCAN_0.base_addr);
+    MCMCAN_Can_initModule(&MCMCAN_Node_Config_Ptr->canModule, &MCMCAN_Node_Config_Ptr->canConfig);
+    MCMCAN_Can_initNodeConfig(&MCMCAN_Node_Config_Ptr->canNodeConfig, &MCMCAN_Node_Config_Ptr->canModule, &MCMCAN0_Node2_Config);
+
+    ret = IfxCan_Can_initNode(&(MCMCAN_Node_Config_Ptr->canSrcNode), &MCMCAN_Node_Config_Ptr->canNodeConfig);
+  }
+  #endif
+  
+  return ret;
+}
+
+RET_TYPE McmCan0_Node3_Init(void)
+{
+  RET_TYPE ret = RTE_OK;
+
+  #if (MCMCAN0_NODE3 == CAN_ENABLE)
+  if (MCMCAN_0.MCMCAN_node3 == NULL)
+  {
+    ret = RTE_NOT_OK;
+  }
+  else
+  {
+    McmcanType * MCMCAN_Node_Config_Ptr = MCMCAN_0.MCMCAN_node3->MCMCAN_Node_Config;
+
+    MCMCAN_Moudle_Init(&MCMCAN_Node_Config_Ptr->canConfig, MCMCAN_0.base_addr);
+    MCMCAN_Can_initModule(&MCMCAN_Node_Config_Ptr->canModule, &MCMCAN_Node_Config_Ptr->canConfig);
+    MCMCAN_Can_initNodeConfig(&MCMCAN_Node_Config_Ptr->canNodeConfig, &MCMCAN_Node_Config_Ptr->canModule, &MCMCAN0_Node3_Config);
+
+    ret = IfxCan_Can_initNode(&(MCMCAN_Node_Config_Ptr->canSrcNode), &MCMCAN_Node_Config_Ptr->canNodeConfig);
+  }
+  #endif
+  
+  return ret;
+}
+
+RET_TYPE McmCan0_Init(void)
+{
+  RET_TYPE ret = RTE_OK;
+
+  ret = McmCan0_Node0_Init();
+  ret = McmCan0_Node1_Init();
+  ret = McmCan0_Node2_Init();
+  ret = McmCan0_Node3_Init();
+  
   return ret;
 }

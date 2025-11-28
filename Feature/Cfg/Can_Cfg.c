@@ -682,6 +682,10 @@ Public License instead of this License.  But first, please read
 /*-----------------------------------------------------Macros--------------------------------------------------------*/
 /*********************************************************************************************************************/
 
+/*
+ * MCMCAN0 node0 config.
+ */
+#if (MCMCAN0_NODE0 == CAN_ENABLE)
 
 /*
  * TX_PDU in McmCan0 Node0.
@@ -725,10 +729,7 @@ RX_Pdu_type McmCan0_Node0_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
     },
  };
 
- /*
- * Each MCMCAN node config.
- */
-IfxCan_Can_NodeConfig MCMCAN0_Node_Config = {
+IfxCan_Can_NodeConfig MCMCAN0_Node0_Config = {
         .can         = NULL_PTR,
         .nodeId      = IfxCan_NodeId_0,
         .clockSource = IfxCan_ClockSource_both,
@@ -906,65 +907,713 @@ IfxCan_Can_NodeConfig MCMCAN0_Node_Config = {
         .calculateBitTimingValues = TRUE
     };
 
-MCMCAN_type MCMCAN_0 = {
-  .base_addr = &MCMCAN0_BASE_ADDR,
-  .MCMCAN_node0 = {
-    .Can_TX_PDU = McmCan0_Node0_TX_PDU,
-    .Can_RX_PDU = McmCan0_Node0_RX_PDU,
-  },
-  .MCMCAN_node1 = {},
-  .MCMCAN_node2 = {},
-  .MCMCAN_node3 = {},
+MCMCAN_Node_type MCMCAN_Node0_PDU_Config = {
+  .MCMCAN_Node_Config = NULL,
+  .Can_TX_PDU = McmCan0_Node0_TX_PDU,
+  .Can_RX_PDU = McmCan0_Node0_RX_PDU,
 };
+#endif
 
 /*
-#if((MCMCAN1_NODE0 == ENABLE) \
-    || (MCMCAN1_NODE1 == ENABLE) \
-    || (MCMCAN1_NODE2 == ENABLE) \
-    || (MCMCAN1_NODE3 == ENABLE))
-MCMCAN1_type MCMCAN_1 = {
-  .base_addr = MCMCAN1_BASE_ADDR,
-#if(MCMCAN1_NODE0 == ENABLE)
-  .MCMCAN1_node0 = {
-    .MCMCAN_Node_Config.canNodeConfig = &MCMCAN1_Node_Config,
-    .Can_TX_PDU = &McmCan1_Node0_TX_PDU,
-    .Can_RX_PDU = &McmCan1_Node0_RX_PDU
-  },
-#endif
-#if(MCMCAN1_NODE1 == ENABLE)
-  .MCMCAN1_node1 = {},
-#endif
-#if(MCMCAN1_NODE2 == ENABLE)
-  .MCMCAN1_node2 = {},
-#endif
-#if(MCMCAN1_NODE3 == ENABLE)
-  .MCMCAN1_node3 = {},
-#endif
+ * MCMCAN0 node1 config.
+ */
+#if (MCMCAN0_NODE1 == CAN_ENABLE)
+
+/*
+ * TX_PDU in McmCan0 Node1.
+ */
+TX_Pdu_type McmCan0_Node1_TX_PDU[McmCan0_Node0_TX_PDU_COUNT] = {
+    {
+      .MCMCAN_Id = 0,
+      .Node_Id = 1,
+      .PDU_Id = 0x01,
+      .Can_Id = 0xe0,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+    {
+      .MCMCAN_Id = 0,
+      .Node_Id = 1,
+      .PDU_Id = 0x02,
+      .Can_Id = 0xc1,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+ };
+
+/*
+ * RX_PDU in McmCan0 Node1.
+ */
+RX_Pdu_type McmCan0_Node1_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
+    {
+      .MCMCAN_Id = 0,
+      .PDU_Id = 0x01,
+      .Can_Id = 0x10,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+    {
+      .MCMCAN_Id = 0,
+      .PDU_Id = 0x02,
+      .Can_Id = 0x1f,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+ };
+
+IfxCan_Can_NodeConfig MCMCAN0_Node1_Config = {
+        .can         = NULL_PTR,
+        .nodeId      = IfxCan_NodeId_1,
+        .clockSource = IfxCan_ClockSource_both,
+        .frame       = {
+            .type = IfxCan_FrameType_receive,
+            .mode = IfxCan_FrameMode_standard
+        },
+        .baudRate                                    = {
+            .baudrate      = 500000,
+            .samplePoint   = 8000,
+            .syncJumpWidth = 3,
+            .prescaler     = 0,
+            .timeSegment1  = 3,
+            .timeSegment2  = 10
+        },
+        .fastBaudRate                                = {
+            .baudrate              = 1000000,
+            .samplePoint           = 8000,
+            .syncJumpWidth         = 3,
+            .prescaler             = 1,
+            .timeSegment1          = 3,
+            .timeSegment2          = 10,
+            .tranceiverDelayOffset = 0
+        },
+        .txConfig                                    = {
+            .txMode                   = IfxCan_TxMode_dedicatedBuffers,
+            .dedicatedTxBuffersNumber = 2,
+            .txFifoQueueSize          = 0,
+            .txBufferDataFieldSize    = IfxCan_DataFieldSize_8,
+            .txEventFifoSize          = 0
+        },
+        .filterConfig                                = {
+            .messageIdLength                    = IfxCan_MessageIdLength_standard,
+            .standardListSize                   = 2,
+            .extendedListSize                   = 0,
+            .extendedIdAndMask                  = IFXCAN_EIDM_DEFAULT,
+            .rejectRemoteFramesWithStandardId   = 0,
+            .rejectRemoteFramesWithExtendedId   = 0,
+            .standardFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_acceptToRxFifo0,
+            .extendedFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_acceptToRxFifo0
+        },
+        .rxConfig                                    = {
+            .rxMode                = IfxCan_RxMode_dedicatedBuffers,
+            .rxBufferDataFieldSize = IfxCan_DataFieldSize_8,
+            .rxFifo0DataFieldSize  = IfxCan_DataFieldSize_8,
+            .rxFifo1DataFieldSize  = IfxCan_DataFieldSize_8,
+            .rxFifo0OperatingMode  = IfxCan_RxFifoMode_blocking,
+            .rxFifo1OperatingMode  = IfxCan_RxFifoMode_blocking,
+            .rxFifo0WatermarkLevel = 0,
+            .rxFifo1WatermarkLevel = 0,
+            .rxFifo0Size           = 0,
+            .rxFifo1Size           = 0
+        },
+        .messageRAM                                  = {
+            .baseAddress                    = (uint32)&MODULE_CAN0,
+            .standardFilterListStartAddress = 0x0,
+            .extendedFilterListStartAddress = 0x80,
+            .rxFifo0StartAddress            = 0x100,
+            .rxFifo1StartAddress            = 0x200,
+            .rxBuffersStartAddress          = 0x300,
+            .txEventFifoStartAddress        = 0x400,
+            .txBuffersStartAddress          = 0x440
+        },
+        .interruptConfig                             = {
+            .rxFifo0NewMessageEnabled                = FALSE,
+            .rxFifo0WatermarkEnabled                 = FALSE,
+            .rxFifo0FullEnabled                      = FALSE,
+            .rxFifo0MessageLostEnabled               = FALSE,
+            .rxFifo1NewMessageEnabled                = FALSE,
+            .rxFifo1WatermarkEnabled                 = FALSE,
+            .rxFifo1FullEnabled                      = FALSE,
+            .rxFifo1MessageLostEnabled               = FALSE,
+            .highPriorityMessageEnabled              = FALSE,
+            .transmissionCompletedEnabled            = FALSE,
+            .transmissionCancellationFinishedEnabled = FALSE,
+            .txFifoEmptyEnabled                      = FALSE,
+            .txEventFifoNewEntryEnabled              = FALSE,
+            .txEventFifoWatermarkEnabled             = FALSE,
+            .txEventFifoFullEnabled                  = FALSE,
+            .txEventFifoEventLostEnabled             = FALSE,
+            .timestampWraparoundEnabled              = FALSE,
+            .messageRAMAccessFailureEnabled          = FALSE,
+            .timeoutOccurredEnabled                  = FALSE,
+            .messageStoredToDedicatedRxBufferEnabled = FALSE,
+            .errorLoggingOverflowEnabled             = FALSE,
+            .errorPassiveEnabled                     = FALSE,
+            .warningStatusEnabled                    = FALSE,
+            .busOffStatusEnabled                     = FALSE,
+            .watchdogEnabled                         = FALSE,
+            .protocolErrorArbitrationEnabled         = FALSE,
+            .protocolErrorDataEnabled                = FALSE,
+            .tefifo                                  = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .hpe                                     = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .wati                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .alrt                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .moer                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .safe                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .boff                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .loi                                     = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .reint                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf1f                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf0f                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf1n                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf0n                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .reti                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .traq                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .traco                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            }
+        },
+        .pins                     = NULL_PTR,
+        .busLoopbackEnabled       = FALSE,
+        .calculateBitTimingValues = TRUE
+    };
+
+MCMCAN_Node_type MCMCAN_Node1_PDU_Config = {
+  .MCMCAN_Node_Config = NULL,
+  .Can_TX_PDU = McmCan0_Node1_TX_PDU,
+  .Can_RX_PDU = McmCan0_Node1_RX_PDU,
 };
 #endif
 
-#if((MCMCAN2_NODE0 == ENABLE) \
-    || (MCMCAN2_NODE1 == ENABLE) \
-    || (MCMCAN2_NODE2 == ENABLE) \
-    || (MCMCAN2_NODE3 == ENABLE))
-MCMCAN2_type MCMCAN_2 = {
-  .base_addr = MCMCAN2_BASE_ADDR,
-#if(MCMCAN2_NODE0 == ENABLE)
-  .MCMCAN2_node0 = {
-    .MCMCAN_Node_Config.canNodeConfig = &MCMCAN2_Node_Config,
-    .Can_TX_PDU = &McmCan2_Node0_TX_PDU,
-    .Can_RX_PDU = &McmCan2_Node0_RX_PDU
-  },
-#endif
-#if(MCMCAN2_NODE1 == ENABLE)
-  .MCMCAN2_node1 = {},
-#endif
-#if(MCMCAN2_NODE2 == ENABLE)
-  .MCMCAN2_node2 = {},
-#endif
-#if(MCMCAN2_NODE3 == ENABLE)
-  .MCMCAN2_node3 = {},
-#endif
+/*
+ * MCMCAN0 node2 config.
+ */
+#if (MCMCAN0_NODE2 == CAN_ENABLE)
+
+/*
+ * TX_PDU in McmCan0 Node2.
+ */
+TX_Pdu_type McmCan0_Node2_TX_PDU[McmCan0_Node0_TX_PDU_COUNT] = {
+    {
+      .MCMCAN_Id = 0,
+      .Node_Id = 2,
+      .PDU_Id = 0x01,
+      .Can_Id = 0xe0,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+    {
+      .MCMCAN_Id = 0,
+      .Node_Id = 2,
+      .PDU_Id = 0x02,
+      .Can_Id = 0xc1,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+ };
+
+/*
+ * RX_PDU in McmCan0 Node2.
+ */
+RX_Pdu_type McmCan0_Node2_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
+    {
+      .MCMCAN_Id = 0,
+      .PDU_Id = 0x01,
+      .Can_Id = 0x10,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+    {
+      .MCMCAN_Id = 0,
+      .PDU_Id = 0x02,
+      .Can_Id = 0x1f,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+ };
+
+IfxCan_Can_NodeConfig MCMCAN0_Node2_Config = {
+        .can         = NULL_PTR,
+        .nodeId      = IfxCan_NodeId_2,
+        .clockSource = IfxCan_ClockSource_both,
+        .frame       = {
+            .type = IfxCan_FrameType_receive,
+            .mode = IfxCan_FrameMode_standard
+        },
+        .baudRate                                    = {
+            .baudrate      = 500000,
+            .samplePoint   = 8000,
+            .syncJumpWidth = 3,
+            .prescaler     = 0,
+            .timeSegment1  = 3,
+            .timeSegment2  = 10
+        },
+        .fastBaudRate                                = {
+            .baudrate              = 1000000,
+            .samplePoint           = 8000,
+            .syncJumpWidth         = 3,
+            .prescaler             = 1,
+            .timeSegment1          = 3,
+            .timeSegment2          = 10,
+            .tranceiverDelayOffset = 0
+        },
+        .txConfig                                    = {
+            .txMode                   = IfxCan_TxMode_dedicatedBuffers,
+            .dedicatedTxBuffersNumber = 2,
+            .txFifoQueueSize          = 0,
+            .txBufferDataFieldSize    = IfxCan_DataFieldSize_8,
+            .txEventFifoSize          = 0
+        },
+        .filterConfig                                = {
+            .messageIdLength                    = IfxCan_MessageIdLength_standard,
+            .standardListSize                   = 2,
+            .extendedListSize                   = 0,
+            .extendedIdAndMask                  = IFXCAN_EIDM_DEFAULT,
+            .rejectRemoteFramesWithStandardId   = 0,
+            .rejectRemoteFramesWithExtendedId   = 0,
+            .standardFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_acceptToRxFifo0,
+            .extendedFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_acceptToRxFifo0
+        },
+        .rxConfig                                    = {
+            .rxMode                = IfxCan_RxMode_dedicatedBuffers,
+            .rxBufferDataFieldSize = IfxCan_DataFieldSize_8,
+            .rxFifo0DataFieldSize  = IfxCan_DataFieldSize_8,
+            .rxFifo1DataFieldSize  = IfxCan_DataFieldSize_8,
+            .rxFifo0OperatingMode  = IfxCan_RxFifoMode_blocking,
+            .rxFifo1OperatingMode  = IfxCan_RxFifoMode_blocking,
+            .rxFifo0WatermarkLevel = 0,
+            .rxFifo1WatermarkLevel = 0,
+            .rxFifo0Size           = 0,
+            .rxFifo1Size           = 0
+        },
+        .messageRAM                                  = {
+            .baseAddress                    = (uint32)&MODULE_CAN0,
+            .standardFilterListStartAddress = 0x0,
+            .extendedFilterListStartAddress = 0x80,
+            .rxFifo0StartAddress            = 0x100,
+            .rxFifo1StartAddress            = 0x200,
+            .rxBuffersStartAddress          = 0x300,
+            .txEventFifoStartAddress        = 0x400,
+            .txBuffersStartAddress          = 0x440
+        },
+        .interruptConfig                             = {
+            .rxFifo0NewMessageEnabled                = FALSE,
+            .rxFifo0WatermarkEnabled                 = FALSE,
+            .rxFifo0FullEnabled                      = FALSE,
+            .rxFifo0MessageLostEnabled               = FALSE,
+            .rxFifo1NewMessageEnabled                = FALSE,
+            .rxFifo1WatermarkEnabled                 = FALSE,
+            .rxFifo1FullEnabled                      = FALSE,
+            .rxFifo1MessageLostEnabled               = FALSE,
+            .highPriorityMessageEnabled              = FALSE,
+            .transmissionCompletedEnabled            = FALSE,
+            .transmissionCancellationFinishedEnabled = FALSE,
+            .txFifoEmptyEnabled                      = FALSE,
+            .txEventFifoNewEntryEnabled              = FALSE,
+            .txEventFifoWatermarkEnabled             = FALSE,
+            .txEventFifoFullEnabled                  = FALSE,
+            .txEventFifoEventLostEnabled             = FALSE,
+            .timestampWraparoundEnabled              = FALSE,
+            .messageRAMAccessFailureEnabled          = FALSE,
+            .timeoutOccurredEnabled                  = FALSE,
+            .messageStoredToDedicatedRxBufferEnabled = FALSE,
+            .errorLoggingOverflowEnabled             = FALSE,
+            .errorPassiveEnabled                     = FALSE,
+            .warningStatusEnabled                    = FALSE,
+            .busOffStatusEnabled                     = FALSE,
+            .watchdogEnabled                         = FALSE,
+            .protocolErrorArbitrationEnabled         = FALSE,
+            .protocolErrorDataEnabled                = FALSE,
+            .tefifo                                  = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .hpe                                     = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .wati                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .alrt                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .moer                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .safe                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .boff                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .loi                                     = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .reint                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf1f                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf0f                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf1n                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf0n                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .reti                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .traq                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .traco                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            }
+        },
+        .pins                     = NULL_PTR,
+        .busLoopbackEnabled       = FALSE,
+        .calculateBitTimingValues = TRUE
+    };
+
+MCMCAN_Node_type MCMCAN_Node2_PDU_Config = {
+  .MCMCAN_Node_Config = NULL,
+  .Can_TX_PDU = McmCan0_Node2_TX_PDU,
+  .Can_RX_PDU = McmCan0_Node2_RX_PDU,
 };
 #endif
-*/
+
+/*
+ * MCMCAN0 node3 config.
+ */
+#if (MCMCAN0_NODE3 == CAN_ENABLE)
+
+/*
+ * TX_PDU in McmCan0 Node3.
+ */
+TX_Pdu_type McmCan0_Node3_TX_PDU[McmCan0_Node0_TX_PDU_COUNT] = {
+    {
+      .MCMCAN_Id = 0,
+      .Node_Id = 3,
+      .PDU_Id = 0x01,
+      .Can_Id = 0xe0,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+    {
+      .MCMCAN_Id = 0,
+      .Node_Id = 3,
+      .PDU_Id = 0x02,
+      .Can_Id = 0xc1,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+ };
+
+/*
+ * RX_PDU in McmCan0 Node3.
+ */
+RX_Pdu_type McmCan0_Node3_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
+    {
+      .MCMCAN_Id = 0,
+      .PDU_Id = 0x01,
+      .Can_Id = 0x10,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+    {
+      .MCMCAN_Id = 0,
+      .PDU_Id = 0x02,
+      .Can_Id = 0x1f,
+      .PDU_Length = Can_Data_Length,
+      .PDU_Data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    },
+ };
+
+IfxCan_Can_NodeConfig MCMCAN0_Node3_Config = {
+        .can         = NULL_PTR,
+        .nodeId      = IfxCan_NodeId_3,
+        .clockSource = IfxCan_ClockSource_both,
+        .frame       = {
+            .type = IfxCan_FrameType_receive,
+            .mode = IfxCan_FrameMode_standard
+        },
+        .baudRate                                    = {
+            .baudrate      = 500000,
+            .samplePoint   = 8000,
+            .syncJumpWidth = 3,
+            .prescaler     = 0,
+            .timeSegment1  = 3,
+            .timeSegment2  = 10
+        },
+        .fastBaudRate                                = {
+            .baudrate              = 1000000,
+            .samplePoint           = 8000,
+            .syncJumpWidth         = 3,
+            .prescaler             = 1,
+            .timeSegment1          = 3,
+            .timeSegment2          = 10,
+            .tranceiverDelayOffset = 0
+        },
+        .txConfig                                    = {
+            .txMode                   = IfxCan_TxMode_dedicatedBuffers,
+            .dedicatedTxBuffersNumber = 2,
+            .txFifoQueueSize          = 0,
+            .txBufferDataFieldSize    = IfxCan_DataFieldSize_8,
+            .txEventFifoSize          = 0
+        },
+        .filterConfig                                = {
+            .messageIdLength                    = IfxCan_MessageIdLength_standard,
+            .standardListSize                   = 2,
+            .extendedListSize                   = 0,
+            .extendedIdAndMask                  = IFXCAN_EIDM_DEFAULT,
+            .rejectRemoteFramesWithStandardId   = 0,
+            .rejectRemoteFramesWithExtendedId   = 0,
+            .standardFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_acceptToRxFifo0,
+            .extendedFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_acceptToRxFifo0
+        },
+        .rxConfig                                    = {
+            .rxMode                = IfxCan_RxMode_dedicatedBuffers,
+            .rxBufferDataFieldSize = IfxCan_DataFieldSize_8,
+            .rxFifo0DataFieldSize  = IfxCan_DataFieldSize_8,
+            .rxFifo1DataFieldSize  = IfxCan_DataFieldSize_8,
+            .rxFifo0OperatingMode  = IfxCan_RxFifoMode_blocking,
+            .rxFifo1OperatingMode  = IfxCan_RxFifoMode_blocking,
+            .rxFifo0WatermarkLevel = 0,
+            .rxFifo1WatermarkLevel = 0,
+            .rxFifo0Size           = 0,
+            .rxFifo1Size           = 0
+        },
+        .messageRAM                                  = {
+            .baseAddress                    = (uint32)&MODULE_CAN0,
+            .standardFilterListStartAddress = 0x0,
+            .extendedFilterListStartAddress = 0x80,
+            .rxFifo0StartAddress            = 0x100,
+            .rxFifo1StartAddress            = 0x200,
+            .rxBuffersStartAddress          = 0x300,
+            .txEventFifoStartAddress        = 0x400,
+            .txBuffersStartAddress          = 0x440
+        },
+        .interruptConfig                             = {
+            .rxFifo0NewMessageEnabled                = FALSE,
+            .rxFifo0WatermarkEnabled                 = FALSE,
+            .rxFifo0FullEnabled                      = FALSE,
+            .rxFifo0MessageLostEnabled               = FALSE,
+            .rxFifo1NewMessageEnabled                = FALSE,
+            .rxFifo1WatermarkEnabled                 = FALSE,
+            .rxFifo1FullEnabled                      = FALSE,
+            .rxFifo1MessageLostEnabled               = FALSE,
+            .highPriorityMessageEnabled              = FALSE,
+            .transmissionCompletedEnabled            = FALSE,
+            .transmissionCancellationFinishedEnabled = FALSE,
+            .txFifoEmptyEnabled                      = FALSE,
+            .txEventFifoNewEntryEnabled              = FALSE,
+            .txEventFifoWatermarkEnabled             = FALSE,
+            .txEventFifoFullEnabled                  = FALSE,
+            .txEventFifoEventLostEnabled             = FALSE,
+            .timestampWraparoundEnabled              = FALSE,
+            .messageRAMAccessFailureEnabled          = FALSE,
+            .timeoutOccurredEnabled                  = FALSE,
+            .messageStoredToDedicatedRxBufferEnabled = FALSE,
+            .errorLoggingOverflowEnabled             = FALSE,
+            .errorPassiveEnabled                     = FALSE,
+            .warningStatusEnabled                    = FALSE,
+            .busOffStatusEnabled                     = FALSE,
+            .watchdogEnabled                         = FALSE,
+            .protocolErrorArbitrationEnabled         = FALSE,
+            .protocolErrorDataEnabled                = FALSE,
+            .tefifo                                  = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .hpe                                     = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .wati                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .alrt                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .moer                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .safe                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .boff                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .loi                                     = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .reint                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf1f                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf0f                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf1n                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .rxf0n                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .reti                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .traq                                    = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            },
+            .traco                                   = {
+                .interruptLine = IfxCan_InterruptLine_0,
+                .priority      = 0,
+                .typeOfService = IfxSrc_Tos_cpu0
+            }
+        },
+        .pins                     = NULL_PTR,
+        .busLoopbackEnabled       = FALSE,
+        .calculateBitTimingValues = TRUE
+    };
+
+MCMCAN_Node_type MCMCAN_Node3_PDU_Config = {
+  .MCMCAN_Node_Config = NULL,
+  .Can_TX_PDU = McmCan0_Node3_TX_PDU,
+  .Can_RX_PDU = McmCan0_Node3_RX_PDU,
+};
+#endif
+
+MCMCAN_type MCMCAN_0 = {
+  .base_addr = &MCMCAN0_BASE_ADDR,
+  .MCMCAN_node0 = &MCMCAN_Node0_PDU_Config,
+  .MCMCAN_node1 = NULL,
+  .MCMCAN_node2 = NULL,
+  .MCMCAN_node3 = NULL,
+};

@@ -672,148 +672,18 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>. */
+#ifndef CAN2ETH_TYPES_H
+#define CAN2ETH_TYPES_H
 
-#ifndef CAN_CFH
-#define CAN_CFH
-/*********************************************************************************************************************/
-/*-----------------------------------------------------Includes------------------------------------------------------*/
-/*********************************************************************************************************************/
-#include "Ifx_Types.h"
-#include "IfxCan_Can.h"
-#include "IfxCan.h"
-#include "IfxCpu_Irq.h"
-#include "IfxPort.h"  
-#include "Platform_Types.h"
-#include "can2eth_types.h"
+/******************************************************************************
+**                      Includes                                             **
+******************************************************************************/
 
-/*********************************************************************************************************************/
-/*-----------------------------------------------------Macros--------------------------------------------------------*/
-/*********************************************************************************************************************/
-#define CAN_ENABLE 1
-#define CAN_UNABLE 0
-
-/*********************************************************************************************************************/
-/*----------------------------------------Configuration Macros-------------------------------------------------------*/
-/*********************************************************************************************************************/
-/*
- * Configuration of MCMCAN node.
- */
-#define MCMCAN0_BASE_ADDR ((*(Ifx_CAN*)0xF0200000u))
-#define MCMCAN1_BASE_ADDR ((*(Ifx_CAN*)0xF0210000u))
-#define MCMCAN2_BASE_ADDR ((*(Ifx_CAN*)0xF0220000u))
-
-#define Can_Data_Length 8
-#define CAN_FILTER_CONFIG_NUMBER 2  //define the number of receive message Filter in one node.
-
-#define MCMCAN0_NODE0 CAN_ENABLE  //define if MCMCAN is used or not
-#define MCMCAN0_NODE1 CAN_UNABLE
-#define MCMCAN0_NODE2 CAN_UNABLE
-#define MCMCAN0_NODE3 CAN_UNABLE
-#define MCMCAN1_NODE0 CAN_UNABLE
-#define MCMCAN1_NODE1 CAN_UNABLE
-#define MCMCAN1_NODE2 CAN_UNABLE
-#define MCMCAN1_NODE3 CAN_UNABLE
-#define MCMCAN2_NODE0 CAN_UNABLE
-#define MCMCAN2_NODE1 CAN_UNABLE
-#define MCMCAN2_NODE2 CAN_UNABLE
-#define MCMCAN2_NODE3 CAN_UNABLE
-
-#define McmCan0_Node0_TX_PDU_COUNT 8    //define the number of transmit message one node, McmCan 0
-#define McmCan0_Node0_RX_PDU_COUNT 8    //define the number of receive message one node, McmCan 0
-#define McmCan0_Node1_TX_PDU_COUNT 0
-#define McmCan0_Node1_RX_PDU_COUNT 0
-#define McmCan0_Node2_TX_PDU_COUNT 0
-#define McmCan0_Node2_RX_PDU_COUNT 0
-#define McmCan0_Node3_TX_PDU_COUNT 0
-#define McmCan0_Node3_RX_PDU_COUNT 0
-
-#define McmCan1_Node0_TX_PDU_COUNT 0    //define the number of transmit message one node, McmCan 1
-#define McmCan1_Node0_RX_PDU_COUNT 0    //define the number of receive message one node, McmCan 1
-#define McmCan1_Node1_TX_PDU_COUNT 0
-#define McmCan1_Node1_RX_PDU_COUNT 0
-#define McmCan1_Node2_TX_PDU_COUNT 0
-#define McmCan1_Node2_RX_PDU_COUNT 0
-#define McmCan1_Node3_TX_PDU_COUNT 0
-#define McmCan1_Node3_RX_PDU_COUNT 0
-
-#define McmCan2_Node0_TX_PDU_COUNT 0    //define the number of transmit message one node, McmCan 2
-#define McmCan2_Node0_RX_PDU_COUNT 0    //define the number of receive message one node, McmCan 2
-#define McmCan2_Node1_TX_PDU_COUNT 0
-#define McmCan2_Node1_RX_PDU_COUNT 0
-#define McmCan2_Node2_TX_PDU_COUNT 0
-#define McmCan2_Node2_RX_PDU_COUNT 0
-#define McmCan2_Node3_TX_PDU_COUNT 0
-#define McmCan2_Node3_RX_PDU_COUNT 0
-
-/*********************************************************************************************************************/
-/*-----------------------------------------------------typedef-------------------------------------------------------*/
-/*********************************************************************************************************************/
-/*
- * Definition of the message PDU type.
- */
-typedef struct
-{
-    uint8 MCMCAN_Id;
-    uint8 Node_Id;
-    uint16 PDU_Id;
-    uint32 Can_Id;
-    uint8 PDU_Length;
-    uint8 PDU_Data[Can_Data_Length];
-} TX_Pdu_type;
-
-typedef struct
-{
-    uint8 MCMCAN_Id;
-    uint16 PDU_Id;
-    uint32 Can_Id;
-    uint8 PDU_Length;
-    uint8 PDU_Data[Can_Data_Length];
-} RX_Pdu_type;
-
-/*
- * Definition of MCMCAN node type.
- */
-typedef struct
-{
-    IfxCan_Can_Config canConfig;                            /* CAN module configuration structure                   */
-    IfxCan_Can canModule;                                   /* CAN module handle                                    */
-    IfxCan_Can_Node canSrcNode;                             /* CAN source node handle data structure                */
-    IfxCan_Can_Node canDstNode;                             /* CAN destination node handle data structure           */
-    IfxCan_Can_NodeConfig canNodeConfig;                    /* CAN node configuration structure                     */
-    IfxCan_Filter canFilter;                                /* CAN filter configuration structure                   */
-    IfxCan_Message txMsg;                                   /* Transmitted CAN message structure                    */
-    IfxCan_Message rxMsg;                                   /* Received CAN message structure                       */
-    uint8 txData[Can_Data_Length];                /* Transmitted CAN data array                           */
-    uint8 rxData[Can_Data_Length];                /* Received CAN data array                              */
-} McmcanType;
-
-typedef struct
-{
-  McmcanType  * MCMCAN_Node_Config;
-  TX_Pdu_type * Can_TX_PDU;
-  RX_Pdu_type * Can_RX_PDU;
-} MCMCAN_Node_type;
-
-/*
- * Definition of MCMCAN type. Base on macro MCMCANi to judge if MCMCAN is enable.
- */
-typedef struct
-{
-  Ifx_CAN * base_addr;
-    MCMCAN_Node_type * MCMCAN_node0;
-    MCMCAN_Node_type * MCMCAN_node1;
-    MCMCAN_Node_type * MCMCAN_node2;
-    MCMCAN_Node_type * MCMCAN_node3;
-} MCMCAN_type;
-
-/*********************************************************************************************************************/
-/*-----------------------------------------------------External var--------------------------------------------------*/
-/*********************************************************************************************************************/
-extern MCMCAN_type MCMCAN_0;
-
-extern IfxCan_Can_NodeConfig MCMCAN0_Node0_Config;
-
-extern TX_Pdu_type McmCan0_Node0_TX_PDU[McmCan0_Node0_TX_PDU_COUNT];
-extern RX_Pdu_type McmCan0_Node0_RX_PDU[McmCan0_Node0_RX_PDU_COUNT];
+/******************************************************************************
+**                      Global Macro Definitions                             **
+******************************************************************************/
+#define RTE_OK 1         
+#define RTE_NOT_OK 0     
+#define RET_TYPE boolean 
 
 #endif
