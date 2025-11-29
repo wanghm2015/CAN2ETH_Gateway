@@ -703,7 +703,20 @@ Public License instead of this License.  But first, please read
 #define MCMCAN2_BASE_ADDR ((*(Ifx_CAN*)0xF0220000u))
 
 #define Can_Data_Length 8
-#define CAN_FILTER_CONFIG_NUMBER 2  //define the number of receive message Filter in one node.
+#define CAN_DRIVER_BUFFER_LENGTH (Can_Data_Length/4)
+
+#define MCMCAN0_NODE0_FILTER_CONFIG_NUMBER 2  //define the number of receive message Filter in one node.
+#define MCMCAN0_NODE1_FILTER_CONFIG_NUMBER 2
+#define MCMCAN0_NODE2_FILTER_CONFIG_NUMBER 2
+#define MCMCAN0_NODE3_FILTER_CONFIG_NUMBER 2
+#define MCMCAN1_NODE0_FILTER_CONFIG_NUMBER 2
+#define MCMCAN1_NODE1_FILTER_CONFIG_NUMBER 2
+#define MCMCAN1_NODE2_FILTER_CONFIG_NUMBER 2
+#define MCMCAN1_NODE3_FILTER_CONFIG_NUMBER 2
+#define MCMCAN2_NODE0_FILTER_CONFIG_NUMBER 2
+#define MCMCAN2_NODE1_FILTER_CONFIG_NUMBER 2
+#define MCMCAN2_NODE2_FILTER_CONFIG_NUMBER 2
+#define MCMCAN2_NODE3_FILTER_CONFIG_NUMBER 2
 
 #define MCMCAN0_NODE0 CAN_ENABLE  //define if MCMCAN is used or not
 #define MCMCAN0_NODE1 CAN_UNABLE
@@ -718,8 +731,8 @@ Public License instead of this License.  But first, please read
 #define MCMCAN2_NODE2 CAN_UNABLE
 #define MCMCAN2_NODE3 CAN_UNABLE
 
-#define McmCan0_Node0_TX_PDU_COUNT 8    //define the number of transmit message one node, McmCan 0
-#define McmCan0_Node0_RX_PDU_COUNT 8    //define the number of receive message one node, McmCan 0
+#define McmCan0_Node0_TX_PDU_COUNT 2    //define the number of transmit message one node, McmCan 0
+#define McmCan0_Node0_RX_PDU_COUNT 2    //define the number of receive message one node, McmCan 0
 #define McmCan0_Node1_TX_PDU_COUNT 0
 #define McmCan0_Node1_RX_PDU_COUNT 0
 #define McmCan0_Node2_TX_PDU_COUNT 0
@@ -745,6 +758,12 @@ Public License instead of this License.  But first, please read
 #define McmCan2_Node3_TX_PDU_COUNT 0
 #define McmCan2_Node3_RX_PDU_COUNT 0
 
+/*
+ * brief interrupt priority macro.
+ */
+#define ISR_PRIORITY_CAN_TRACO 10
+#define ISR_PRIORITY_CAN_REINT 11
+
 /*********************************************************************************************************************/
 /*-----------------------------------------------------typedef-------------------------------------------------------*/
 /*********************************************************************************************************************/
@@ -763,8 +782,6 @@ typedef struct
 
 typedef struct
 {
-    uint8 MCMCAN_Id;
-    uint16 PDU_Id;
     uint32 Can_Id;
     uint8 PDU_Length;
     uint8 PDU_Data[Can_Data_Length];
@@ -780,40 +797,26 @@ typedef struct
     IfxCan_Can_Node canSrcNode;                             /* CAN source node handle data structure                */
     IfxCan_Can_Node canDstNode;                             /* CAN destination node handle data structure           */
     IfxCan_Can_NodeConfig canNodeConfig;                    /* CAN node configuration structure                     */
-    IfxCan_Filter canFilter;                                /* CAN filter configuration structure                   */
     IfxCan_Message txMsg;                                   /* Transmitted CAN message structure                    */
     IfxCan_Message rxMsg;                                   /* Received CAN message structure                       */
-    uint8 txData[Can_Data_Length];                /* Transmitted CAN data array                           */
-    uint8 rxData[Can_Data_Length];                /* Received CAN data array                              */
+    uint32 txData[CAN_DRIVER_BUFFER_LENGTH];                /* Transmitted CAN data array                           */
+    uint32 rxData[CAN_DRIVER_BUFFER_LENGTH];                /* Received CAN data array                              */
 } McmcanType;
 
 typedef struct
 {
-  McmcanType  * MCMCAN_Node_Config;
   TX_Pdu_type * Can_TX_PDU;
   RX_Pdu_type * Can_RX_PDU;
 } MCMCAN_Node_type;
 
-/*
- * Definition of MCMCAN type. Base on macro MCMCANi to judge if MCMCAN is enable.
- */
-typedef struct
-{
-  Ifx_CAN * base_addr;
-    MCMCAN_Node_type * MCMCAN_node0;
-    MCMCAN_Node_type * MCMCAN_node1;
-    MCMCAN_Node_type * MCMCAN_node2;
-    MCMCAN_Node_type * MCMCAN_node3;
-} MCMCAN_type;
 
 /*********************************************************************************************************************/
 /*-----------------------------------------------------External var--------------------------------------------------*/
 /*********************************************************************************************************************/
-extern MCMCAN_type MCMCAN_0;
-
-extern IfxCan_Can_NodeConfig MCMCAN0_Node0_Config;
+extern McmcanType MCMCAN0_Node0;
 
 extern TX_Pdu_type McmCan0_Node0_TX_PDU[McmCan0_Node0_TX_PDU_COUNT];
 extern RX_Pdu_type McmCan0_Node0_RX_PDU[McmCan0_Node0_RX_PDU_COUNT];
+extern IfxCan_Filter MCMCAN0_Node0_CanFilter[MCMCAN0_NODE0_FILTER_CONFIG_NUMBER];
 
 #endif

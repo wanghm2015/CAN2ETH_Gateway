@@ -48,6 +48,7 @@
 /* Scheduler includes */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "Feature/Include/Can.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent cpuSyncEvent = 0;
 #ifdef TEST_CODE
@@ -89,12 +90,13 @@ void core0_main(void)
     IfxCpu_emitEvent(&cpuSyncEvent);
     IfxCpu_waitEvent(&cpuSyncEvent, 1);
 
-    /* ========== Clock Configuration Verification ========== */
     /* ========== test code WHM ========== */
     #ifdef TEST_CODE
 
     #endif
-    /* ========== End of Clock Verification ========== */
+
+    /* Init Can Component */
+    Can_Init();
 
     /* Create the Blinky task */
     BaseType_t xReturn1 = xTaskCreate(task_blinky, "BINKY", configMINIMAL_STACK_SIZE, NULL, 8, NULL);

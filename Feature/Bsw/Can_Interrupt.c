@@ -673,22 +673,38 @@ the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>. */
 
-#ifndef CANH
-#define CANH
 /*********************************************************************************************************************/
 /*-----------------------------------------------------Includes------------------------------------------------------*/
 /*********************************************************************************************************************/
-#include <stdlib.h>
-#include <string.h>
-#include "can2eth_types.h"
+#include "FreeRTOSConfig.h"
+#include "Can_Cfg.h"
 
 /*********************************************************************************************************************/
-/*-----------------------------------------------------Macros--------------------------------------------------------*/
+/*---------------------------------------------Function Implementations----------------------------------------------*/
 /*********************************************************************************************************************/
+IFX_INTERRUPT(canIsrTracoHandler, configCPU_NR, ISR_PRIORITY_CAN_TRACO);
+IFX_INTERRUPT(canIsrReintHandler, configCPU_NR, ISR_PRIORITY_CAN_REINT);
 
-/*********************************************************************************************************************/
-/*-----------------------------------------------------External var--------------------------------------------------*/
-/*********************************************************************************************************************/
-extern RET_TYPE Can_Init(void);
+/* Interrupt Service Routine (ISR) called once the TX interrupt has been generated.
+ * Turns on the LED1 to indicate successful CAN message transmission.
+ */
+void canIsrTracoHandler(void)
+{
+    /* Clear the "Transmission Completed" interrupt flag */
+    IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canSrcNode.node, IfxCan_Interrupt_transmissionCompleted);
+}
 
-#endif
+/* Interrupt Service Routine (ISR) called once the RX interrupt has been generated.
+ * Compares the content of the received CAN message with the content of the transmitted CAN message
+ * and in case of success, turns on the LED2 to indicate successful CAN message reception.
+ */
+void canIsrReintHandler(void)
+{
+    /* Clear the "Message stored to Dedicated RX Buffer" interrupt flag */
+    IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canDstNode.node, IfxCan_Interrupt_messageStoredToDedicatedRxBuffer);
+
+    IfxCan_Node_isRxBufferNewDataUpdated(Ifx_CAN_N *node, IfxCan_RxBufferId rxBufferId);
+    
+    /* Read the received CAN message */
+    IfxCan_Can_readMessage(&MCMCAN0_Node0.canDstNode, &MCMCAN0_Node0.rxMsg, MCMCAN0_Node0.rxData);
+}

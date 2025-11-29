@@ -695,47 +695,20 @@ Public License instead of this License.  But first, please read
 /*********************************************************************************************************************/
 /*---------------------------------------------Function Implementations----------------------------------------------*/
 /*********************************************************************************************************************/
-void MCMCAN_Moudle_Init(IfxCan_Can_Config *config, Ifx_CAN *can)
-{
-  config->can = can;
-}
-
-void MCMCAN_Can_initModule(IfxCan_Can *can, IfxCan_Can_Config *config)
-{
-    can->can = config->can;
-
-    // if module is not enebled
-    if (IfxCan_isModuleEnabled(can->can) != TRUE)
-    {
-        // Enable module, disregard Sleep Mode request
-        IfxCan_enableModule(can->can);
-    }
-}
-
-void MCMCAN_Can_initNodeConfig(IfxCan_Can_NodeConfig *config, IfxCan_Can *can, IfxCan_Can_NodeConfig * IfxCan_Can_NodeConfig_Par)
-{
-  config = IfxCan_Can_NodeConfig_Par;
-  config->can = can->can;
-}
-
 RET_TYPE McmCan0_Node0_Init(void)
 {
   RET_TYPE ret = RTE_OK;
+  size_t i = 0;
 
   #if (MCMCAN0_NODE0 == CAN_ENABLE)
-  if (MCMCAN_0.MCMCAN_node0 == NULL)
+  IfxCan_Can_initModuleConfig(&MCMCAN0_Node0.canConfig, &MCMCAN0_BASE_ADDR);
+  IfxCan_Can_initModule(&MCMCAN0_Node0.canModule, &MCMCAN0_Node0.canConfig);
+  ret = IfxCan_Can_initNode(&MCMCAN0_Node0.canSrcNode, &MCMCAN0_Node0.canNodeConfig);
+  ret = IfxCan_Can_initNode(&MCMCAN0_Node0.canDstNode, &MCMCAN0_Node0.canNodeConfig);
+  
+  for (i = 0; i < MCMCAN0_NODE0_FILTER_CONFIG_NUMBER; i++)
   {
-    ret = RTE_NOT_OK;
-  }
-  else
-  {
-    McmcanType * MCMCAN_Node_Config_Ptr = MCMCAN_0.MCMCAN_node0->MCMCAN_Node_Config;
-
-    MCMCAN_Moudle_Init(&MCMCAN_Node_Config_Ptr->canConfig, MCMCAN_0.base_addr);
-    MCMCAN_Can_initModule(&MCMCAN_Node_Config_Ptr->canModule, &MCMCAN_Node_Config_Ptr->canConfig);
-    MCMCAN_Can_initNodeConfig(&MCMCAN_Node_Config_Ptr->canNodeConfig, &MCMCAN_Node_Config_Ptr->canModule, &MCMCAN0_Node0_Config);
-
-    ret = IfxCan_Can_initNode(&(MCMCAN_Node_Config_Ptr->canSrcNode), &MCMCAN_Node_Config_Ptr->canNodeConfig);
+    IfxCan_Can_setStandardFilter(&MCMCAN0_Node0.canDstNode, MCMCAN0_Node0_CanFilter + i);
   }
   #endif
   
@@ -822,6 +795,15 @@ RET_TYPE McmCan0_Init(void)
   ret = McmCan0_Node1_Init();
   ret = McmCan0_Node2_Init();
   ret = McmCan0_Node3_Init();
+  
+  return ret;
+}
+
+RET_TYPE Can_Init(void)
+{
+  RET_TYPE ret = RTE_OK;
+
+  ret = McmCan0_Init();
   
   return ret;
 }
