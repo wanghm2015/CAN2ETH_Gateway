@@ -700,11 +700,32 @@ void canIsrTracoHandler(void)
  */
 void canIsrReintHandler(void)
 {
+  uint8 NDAT_Counter = 0;
+  RET_TYPE New_message_or_not = 0;
+  if(MCMCAN0_Node0.canDstNode.node->IR.B.DRX)    // \brief CAN0 Node0 have received message.
+  {
+    NDAT_Counter = 0;
     /* Clear the "Message stored to Dedicated RX Buffer" interrupt flag */
     IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canDstNode.node, IfxCan_Interrupt_messageStoredToDedicatedRxBuffer);
 
-    IfxCan_Node_isRxBufferNewDataUpdated(Ifx_CAN_N *node, IfxCan_RxBufferId rxBufferId);
+    for (NDAT_Counter = 0; NDAT_Counter < mcmcan0_node0_filter_config_number[0]; NDAT_Counter++)
+    {
+      New_message_or_not = IfxCan_Node_isRxBufferNewDataUpdated(MCMCAN0_Node0.canDstNode.node, NDAT_Counter);
+      if (New_message_or_not == RTE_OK)
+      {
+        /* Read the received CAN message */
+        IfxCan_Can_readMessage(&MCMCAN0_Node0.canDstNode, (MCMCAN0_Node0.rxMsg + NDAT_Counter), MCMCAN0_Node0.rxData);
+      }
+    }
+  }
+  else if (CAN0_IR1.B.DRX == 1)    // \brief CAN0 Node1 have received message.
+  {
+    while (1)
+    {
+      /* code */
+      //it should not to be here forever
+    }
     
-    /* Read the received CAN message */
-    IfxCan_Can_readMessage(&MCMCAN0_Node0.canDstNode, &MCMCAN0_Node0.rxMsg, MCMCAN0_Node0.rxData);
+  }
+    
 }

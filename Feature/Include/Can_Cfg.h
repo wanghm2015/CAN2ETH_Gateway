@@ -703,7 +703,8 @@ Public License instead of this License.  But first, please read
 #define MCMCAN2_BASE_ADDR ((*(Ifx_CAN*)0xF0220000u))
 
 #define Can_Data_Length 8
-#define CAN_DRIVER_BUFFER_LENGTH (Can_Data_Length/4)
+#define CAN_DRIVER_BUFFER_LENGTH (Can_Data_Length >> 2)
+#define Node_Total_Number 12
 
 #define MCMCAN0_NODE0_FILTER_CONFIG_NUMBER 2  //define the number of receive message Filter in one node.
 #define MCMCAN0_NODE1_FILTER_CONFIG_NUMBER 2
@@ -777,14 +778,14 @@ typedef struct
     uint16 PDU_Id;
     uint32 Can_Id;
     uint8 PDU_Length;
-    uint8 PDU_Data[Can_Data_Length];
+    uint32 PDU_Data[CAN_DRIVER_BUFFER_LENGTH];
 } TX_Pdu_type;
 
 typedef struct
 {
     uint32 Can_Id;
     uint8 PDU_Length;
-    uint8 PDU_Data[Can_Data_Length];
+    uint32 PDU_Data[CAN_DRIVER_BUFFER_LENGTH];
 } RX_Pdu_type;
 
 /*
@@ -797,8 +798,8 @@ typedef struct
     IfxCan_Can_Node canSrcNode;                             /* CAN source node handle data structure                */
     IfxCan_Can_Node canDstNode;                             /* CAN destination node handle data structure           */
     IfxCan_Can_NodeConfig canNodeConfig;                    /* CAN node configuration structure                     */
-    IfxCan_Message txMsg;                                   /* Transmitted CAN message structure                    */
-    IfxCan_Message rxMsg;                                   /* Received CAN message structure                       */
+    IfxCan_Message * txMsg;                                   /* Transmitted CAN message structure                    */
+    IfxCan_Message * rxMsg;                                   /* Received CAN message structure                       */
     uint32 txData[CAN_DRIVER_BUFFER_LENGTH];                /* Transmitted CAN data array                           */
     uint32 rxData[CAN_DRIVER_BUFFER_LENGTH];                /* Received CAN data array                              */
 } McmcanType;
@@ -809,6 +810,11 @@ typedef struct
   RX_Pdu_type * Can_RX_PDU;
 } MCMCAN_Node_type;
 
+typedef struct
+{
+  MCMCAN_Node_type * Can_PDU_Ptr;
+  McmcanType * MCMCAN_Node_Ptr;
+} MCMCAN_Node_Struct_type;
 
 /*********************************************************************************************************************/
 /*-----------------------------------------------------External var--------------------------------------------------*/
@@ -818,5 +824,8 @@ extern McmcanType MCMCAN0_Node0;
 extern TX_Pdu_type McmCan0_Node0_TX_PDU[McmCan0_Node0_TX_PDU_COUNT];
 extern RX_Pdu_type McmCan0_Node0_RX_PDU[McmCan0_Node0_RX_PDU_COUNT];
 extern IfxCan_Filter MCMCAN0_Node0_CanFilter[MCMCAN0_NODE0_FILTER_CONFIG_NUMBER];
+extern uint8 mcmcan0_node0_filter_config_number[Node_Total_Number];
+extern IfxCan_Filter * MCMCAN_Node_CanFilter_Ptr_array[Node_Total_Number];
+extern MCMCAN_Node_Struct_type McmCan_Node_Struct[Node_Total_Number];
 
 #endif
