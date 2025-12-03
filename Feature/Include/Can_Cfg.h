@@ -795,8 +795,7 @@ typedef struct
 {
     IfxCan_Can_Config canConfig;                            /* CAN module configuration structure                   */
     IfxCan_Can canModule;                                   /* CAN module handle                                    */
-    IfxCan_Can_Node canSrcNode;                             /* CAN source node handle data structure                */
-    IfxCan_Can_Node canDstNode;                             /* CAN destination node handle data structure           */
+    IfxCan_Can_Node canPhysicsNode;                             /* CAN source node handle data structure                */
     IfxCan_Can_NodeConfig canNodeConfig;                    /* CAN node configuration structure                     */
     IfxCan_Message * txMsg;                                   /* Transmitted CAN message structure                    */
     IfxCan_Message * rxMsg;                                   /* Received CAN message structure                       */

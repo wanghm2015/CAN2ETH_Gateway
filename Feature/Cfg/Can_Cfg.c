@@ -728,7 +728,7 @@ RX_Pdu_type McmCan0_Node0_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
  IfxCan_Message Can0_Node0_txMsg[McmCan0_Node0_TX_PDU_COUNT] = {
   {
     .bufferNumber          = 0,
-    .messageId             = 0x0,
+    .messageId             = 0x7FF,
     .remoteTransmitRequest = 0,
     .messageIdLength       = IfxCan_MessageIdLength_standard,
     .errorStateIndicator   = 0,
@@ -741,7 +741,7 @@ RX_Pdu_type McmCan0_Node0_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
   },
   {
     .bufferNumber          = 1,
-    .messageId             = 0x0,
+    .messageId             = 0x6DF,
     .remoteTransmitRequest = 0,
     .messageIdLength       = IfxCan_MessageIdLength_standard,
     .errorStateIndicator   = 0,
@@ -781,6 +781,14 @@ IfxCan_Message Can0_Node0_rxMsg[McmCan0_Node0_RX_PDU_COUNT] = {
     .readFromRxFifo0       = FALSE,
     .readFromRxFifo1       = FALSE
   }
+};
+
+IfxCan_Can_Pins MCMCAN0_Node0_Pins = {
+  .rxPin = &IfxCan_RXD00B_P20_7_IN,
+  .rxPinMode = IfxPort_InputMode_noPullDevice,
+  .txPin = &IfxCan_TXD00_P20_8_OUT,
+  .txPinMode = IfxPort_OutputMode_pushPull,
+  .padDriver = IfxPort_PadDriver_cmosAutomotiveSpeed3
 };
 
 McmcanType MCMCAN0_Node0 = {
@@ -840,7 +848,7 @@ McmcanType MCMCAN0_Node0 = {
         .rxFifo1Size           = 0
     },
     .messageRAM                                  = {
-        .baseAddress                    = (uint32)&MODULE_CAN0,
+        .baseAddress                    = (uint32)&MCMCAN0_BASE_ADDR,
         .standardFilterListStartAddress = 0x0,
         .extendedFilterListStartAddress = 0x80,
         .rxFifo0StartAddress            = 0x100,
@@ -958,7 +966,7 @@ McmcanType MCMCAN0_Node0 = {
             .typeOfService = IfxSrc_Tos_cpu0
         }
     },
-    .pins                     = NULL_PTR,
+    .pins                     = &MCMCAN0_Node0_Pins,
     .busLoopbackEnabled       = FALSE,
     .calculateBitTimingValues = TRUE
   },

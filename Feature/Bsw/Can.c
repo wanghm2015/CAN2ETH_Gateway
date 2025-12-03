@@ -733,14 +733,26 @@ RET_TYPE Can_Init(void)
     else
     {
       IfxCan_Can_initModule(&McmcanType_temp_Ptr->canModule, &McmcanType_temp_Ptr->canConfig);
-      ret = IfxCan_Can_initNode(&McmcanType_temp_Ptr->canSrcNode, &McmcanType_temp_Ptr->canNodeConfig);
-      ret = IfxCan_Can_initNode(&McmcanType_temp_Ptr->canDstNode, &McmcanType_temp_Ptr->canNodeConfig);
+      ret = IfxCan_Can_initNode(&McmcanType_temp_Ptr->canPhysicsNode, &McmcanType_temp_Ptr->canNodeConfig);
       
       for (Node_Filter_Count = 0; Node_Filter_Count < mcmcan0_node0_filter_config_number[MCMCAN_Node_Count]; Node_Filter_Count++)
       {
-        IfxCan_Can_setStandardFilter(&McmcanType_temp_Ptr->canDstNode, (MCMCAN_Node_CanFilter_Ptr_array[MCMCAN_Node_Count] + Node_Filter_Count));
+        IfxCan_Can_setStandardFilter(&McmcanType_temp_Ptr->canPhysicsNode, (MCMCAN_Node_CanFilter_Ptr_array[MCMCAN_Node_Count] + Node_Filter_Count));
       }
     }
+  }
+
+  return ret;
+}
+
+RET_TYPE Can_TX_mainfunction(void)
+{
+  RET_TYPE ret = RTE_OK;
+  McmcanType * McmcanType_temp_Ptr = McmCan_Node_Struct[0].MCMCAN_Node_Ptr;
+  
+  while( IfxCan_Status_notSentBusy ==
+           IfxCan_Can_sendMessage(&McmcanType_temp_Ptr->canPhysicsNode, McmcanType_temp_Ptr->txMsg, &McmcanType_temp_Ptr->txData[0]) )
+  {
   }
 
   return ret;

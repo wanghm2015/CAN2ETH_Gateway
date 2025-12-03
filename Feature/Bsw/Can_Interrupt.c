@@ -691,7 +691,7 @@ IFX_INTERRUPT(canIsrReintHandler, configCPU_NR, ISR_PRIORITY_CAN_REINT);
 void canIsrTracoHandler(void)
 {
     /* Clear the "Transmission Completed" interrupt flag */
-    IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canSrcNode.node, IfxCan_Interrupt_transmissionCompleted);
+    IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canPhysicsNode.node, IfxCan_Interrupt_transmissionCompleted);
 }
 
 /* Interrupt Service Routine (ISR) called once the RX interrupt has been generated.
@@ -702,19 +702,19 @@ void canIsrReintHandler(void)
 {
   uint8 NDAT_Counter = 0;
   RET_TYPE New_message_or_not = 0;
-  if(MCMCAN0_Node0.canDstNode.node->IR.B.DRX)    // \brief CAN0 Node0 have received message.
+  if(MCMCAN0_Node0.canPhysicsNode.node->IR.B.DRX)    // \brief CAN0 Node0 have received message.
   {
     NDAT_Counter = 0;
     /* Clear the "Message stored to Dedicated RX Buffer" interrupt flag */
-    IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canDstNode.node, IfxCan_Interrupt_messageStoredToDedicatedRxBuffer);
+    IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canPhysicsNode.node, IfxCan_Interrupt_messageStoredToDedicatedRxBuffer);
 
     for (NDAT_Counter = 0; NDAT_Counter < mcmcan0_node0_filter_config_number[0]; NDAT_Counter++)
     {
-      New_message_or_not = IfxCan_Node_isRxBufferNewDataUpdated(MCMCAN0_Node0.canDstNode.node, NDAT_Counter);
+      New_message_or_not = IfxCan_Node_isRxBufferNewDataUpdated(MCMCAN0_Node0.canPhysicsNode.node, NDAT_Counter);
       if (New_message_or_not == RTE_OK)
       {
         /* Read the received CAN message */
-        IfxCan_Can_readMessage(&MCMCAN0_Node0.canDstNode, (MCMCAN0_Node0.rxMsg + NDAT_Counter), MCMCAN0_Node0.rxData);
+        IfxCan_Can_readMessage(&MCMCAN0_Node0.canPhysicsNode, (MCMCAN0_Node0.rxMsg + NDAT_Counter), MCMCAN0_Node0.rxData);
       }
     }
   }
