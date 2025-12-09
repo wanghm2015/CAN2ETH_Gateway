@@ -794,7 +794,7 @@ IfxCan_Can_Pins MCMCAN0_Node0_Pins = {
 McmcanType MCMCAN0_Node0 = {
   .canConfig.can = &MCMCAN0_BASE_ADDR,
   .canNodeConfig = {
-    .can         = NULL_PTR,
+    .can         = &MCMCAN0_BASE_ADDR,
     .nodeId      = IfxCan_NodeId_0,
     .clockSource = IfxCan_ClockSource_both,
     .frame       = {
@@ -867,8 +867,8 @@ McmcanType MCMCAN0_Node0 = {
         .rxFifo1FullEnabled                      = FALSE,
         .rxFifo1MessageLostEnabled               = FALSE,
         .highPriorityMessageEnabled              = FALSE,
-        .transmissionCompletedEnabled            = FALSE,
-        .transmissionCancellationFinishedEnabled = TRUE,
+        .transmissionCompletedEnabled            = TRUE,
+        .transmissionCancellationFinishedEnabled = FALSE,
         .txFifoEmptyEnabled                      = FALSE,
         .txEventFifoNewEntryEnabled              = FALSE,
         .txEventFifoWatermarkEnabled             = FALSE,
@@ -1043,7 +1043,7 @@ RX_Pdu_type McmCan0_Node1_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
  };
 
 IfxCan_Can_NodeConfig MCMCAN0_Node1_Config = {
-        .can         = NULL_PTR,
+        .can         = &MCMCAN0_BASE_ADDR,
         .nodeId      = IfxCan_NodeId_1,
         .clockSource = IfxCan_ClockSource_both,
         .frame       = {
@@ -1275,7 +1275,7 @@ RX_Pdu_type McmCan0_Node2_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
  };
 
 IfxCan_Can_NodeConfig MCMCAN0_Node2_Config = {
-        .can         = NULL_PTR,
+        .can         = &MCMCAN0_BASE_ADDR,
         .nodeId      = IfxCan_NodeId_2,
         .clockSource = IfxCan_ClockSource_both,
         .frame       = {
@@ -1507,7 +1507,7 @@ RX_Pdu_type McmCan0_Node3_RX_PDU[McmCan0_Node0_RX_PDU_COUNT] = {
  };
 
 IfxCan_Can_NodeConfig MCMCAN0_Node3_Config = {
-        .can         = NULL_PTR,
+        .can         = &MCMCAN0_BASE_ADDR,
         .nodeId      = IfxCan_NodeId_3,
         .clockSource = IfxCan_ClockSource_both,
         .frame       = {

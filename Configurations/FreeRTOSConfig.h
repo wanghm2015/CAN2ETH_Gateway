@@ -30,7 +30,7 @@
 #define configNUM_THREAD_LOCAL_STORAGE_POINTERS    5
 
 /* Software timer configuration. */
-#define configUSE_TIMERS                           ( 0 )    //whm
+#define configUSE_TIMERS                           ( 1 )
 #define configTIMER_TASK_PRIORITY                  ( 9 )
 #define configTIMER_QUEUE_LENGTH                   ( 5 )
 #define configTIMER_TASK_STACK_DEPTH               configMINIMAL_STACK_SIZE

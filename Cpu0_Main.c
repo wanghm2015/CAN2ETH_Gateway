@@ -47,10 +47,15 @@
 
 /* Scheduler includes */
 #include "FreeRTOS.h"
+#include "timers.h"
 #include "task.h"
+
 #include "Feature/Include/Can.h"
+#include "Feature/Include/Schm.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent cpuSyncEvent = 0;
+TimerHandle_t _10ms_timer;
+
 #ifdef TEST_CODE
 uint32 test_task_count = 0;
 #endif
@@ -92,7 +97,7 @@ void core0_main(void)
 
     /* ========== test code WHM ========== */
     #ifdef TEST_CODE
-
+    BaseType_t xReturn2 = xTaskCreate(test_task, "TEST_TASK", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
     #endif
 
     /* Init Can Component */
@@ -100,8 +105,10 @@ void core0_main(void)
 
     /* Create the Blinky task */
     BaseType_t xReturn1 = xTaskCreate(task_blinky, "BINKY", configMINIMAL_STACK_SIZE, NULL, 8, NULL);
-    BaseType_t xReturn2 = xTaskCreate(test_task, "TEST_TASK", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
     
+    _10ms_timer =  xTimerCreate("10mstimer", pdMS_TO_TICKS(10), pdTRUE, NULL, _10ms_Task);
+    xTimerStart(_10ms_timer, 0);
+
     if (xReturn1 != pdPASS)
     {
         while (1)
@@ -128,4 +135,8 @@ void core0_main(void)
  */
 void vApplicationStackOverflowHook (TaskHandle_t xTask, char *pcTaskName)
 {
+    while (1)
+    {
+        /* Stack Overflow !!!!!! */
+    }
 }
