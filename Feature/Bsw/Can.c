@@ -678,6 +678,7 @@ Public License instead of this License.  But first, please read
 #include "IfxCan_Can.h"
 #include "Platform_Types.h"
 #include "can2eth_types.h"
+#include "uthash.h"
 
 #include "Can.h"
 #include "Can_Cfg.h"
@@ -690,7 +691,39 @@ Public License instead of this License.  But first, please read
 /*********************************************************************************************************************/
 /*-------------------------------------------------Global variables--------------------------------------------------*/
 /*********************************************************************************************************************/
+/* \brief the hash list head of RX pdu */
+RX_Pdu_type * McmCan0_Node0_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan0_Node1_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan0_Node2_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan0_Node3_RX_PDU_Hash_head = NULL;
 
+RX_Pdu_type * McmCan1_Node0_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan1_Node1_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan1_Node2_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan1_Node3_RX_PDU_Hash_head = NULL;
+
+RX_Pdu_type * McmCan2_Node0_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan2_Node1_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan2_Node2_RX_PDU_Hash_head = NULL;
+RX_Pdu_type * McmCan2_Node3_RX_PDU_Hash_head = NULL;
+/* \brief the hash list head of TX pdu */
+TX_Pdu_type * McmCan0_Node0_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan0_Node1_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan0_Node2_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan0_Node3_TX_PDU_Hash_head = NULL;
+
+TX_Pdu_type * McmCan1_Node0_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan1_Node1_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan1_Node2_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan1_Node3_TX_PDU_Hash_head = NULL;
+
+TX_Pdu_type * McmCan2_Node0_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan2_Node1_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan2_Node2_TX_PDU_Hash_head = NULL;
+TX_Pdu_type * McmCan2_Node3_TX_PDU_Hash_head = NULL;
+
+RX_Pdu_type * MCMCAN_Node_RX_Hash_array[Node_Total_Number];
+TX_Pdu_type * MCMCAN_Node_TX_Hash_array[Node_Total_Number];
 
 /*********************************************************************************************************************/
 /*---------------------------------------------Function Implementations----------------------------------------------*/
@@ -716,11 +749,80 @@ RET_TYPE McmCan0_Node0_Init(void)
 }
 #endif
 
+static void Can_Hash_Array_Init(void)
+{
+    MCMCAN_Node_RX_Hash_array[0]  = McmCan0_Node0_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[1]  = McmCan0_Node1_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[2]  = McmCan0_Node2_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[3]  = McmCan0_Node3_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[4]  = McmCan1_Node0_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[5]  = McmCan1_Node1_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[6]  = McmCan1_Node2_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[7]  = McmCan1_Node3_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[8]  = McmCan2_Node0_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[9]  = McmCan2_Node1_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[10] = McmCan2_Node2_RX_PDU_Hash_head;
+    MCMCAN_Node_RX_Hash_array[11] = McmCan2_Node3_RX_PDU_Hash_head;
+
+    MCMCAN_Node_TX_Hash_array[0]  = McmCan0_Node0_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[1]  = McmCan0_Node1_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[2]  = McmCan0_Node2_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[3]  = McmCan0_Node3_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[4]  = McmCan1_Node0_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[5]  = McmCan1_Node1_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[6]  = McmCan1_Node2_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[7]  = McmCan1_Node3_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[8]  = McmCan2_Node0_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[9]  = McmCan2_Node1_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[10] = McmCan2_Node2_TX_PDU_Hash_head;
+    MCMCAN_Node_TX_Hash_array[11] = McmCan2_Node3_TX_PDU_Hash_head;
+}
+
+RET_TYPE Can_PDU_Hash_Init(void)
+{
+  RET_TYPE ret = RTE_OK;
+  size_t MCMCAN_Node_Count = 0;
+  size_t PDU_Count = 0;
+  RX_Pdu_type * RX_PDU_strcut_temp_Ptr = NULL;
+  TX_Pdu_type * TX_PDU_strcut_temp_Ptr = NULL;
+
+  Can_Hash_Array_Init();
+
+  for (MCMCAN_Node_Count = 0; MCMCAN_Node_Count < Node_Total_Number; MCMCAN_Node_Count++)
+  {
+    MCMCAN_Node_type * MCMCAN_Node_type_temp_Ptr = McmCan_Node_Struct[MCMCAN_Node_Count].Can_PDU_Ptr;
+
+    if (MCMCAN_Node_type_temp_Ptr == NULL)
+    {
+      continue;
+    }
+    else
+    {
+      /* RX PDU add to hash. */
+      for (PDU_Count = 0; PDU_Count < mcmcan0_node0_RX_PDU_config_number[MCMCAN_Node_Count]; PDU_Count++)
+      {
+        RX_PDU_strcut_temp_Ptr = (MCMCAN_Node_type_temp_Ptr->Can_RX_PDU) + PDU_Count;
+        HASH_ADD_INT(MCMCAN_Node_RX_Hash_array[MCMCAN_Node_Count], Can_Id, RX_PDU_strcut_temp_Ptr);
+      }
+      /* TX PDU add to hash. */
+      for (PDU_Count = 0; PDU_Count < mcmcan0_node0_TX_PDU_config_number[MCMCAN_Node_Count]; PDU_Count++)
+      {
+        TX_PDU_strcut_temp_Ptr = (MCMCAN_Node_type_temp_Ptr->Can_TX_PDU) + PDU_Count;
+        HASH_ADD_INT(MCMCAN_Node_TX_Hash_array[MCMCAN_Node_Count], Can_Id, TX_PDU_strcut_temp_Ptr);
+      }
+    }
+  }
+
+  return ret;
+}
+
 RET_TYPE Can_Init(void)
 {
   RET_TYPE ret = RTE_OK;
   size_t MCMCAN_Node_Count = 0;
   size_t Node_Filter_Count = 0;
+
+  Can_PDU_Hash_Init();
 
   for (MCMCAN_Node_Count = 0; MCMCAN_Node_Count < Node_Total_Number; MCMCAN_Node_Count++)
   {

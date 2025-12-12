@@ -678,6 +678,8 @@ Public License instead of this License.  But first, please read
 /*********************************************************************************************************************/
 #include "FreeRTOSConfig.h"
 #include "Can_Cfg.h"
+#include "Can.h"
+#include "ThirdParty/uthash/src/uthash.h"
 
 /*********************************************************************************************************************/
 /*---------------------------------------------Function Implementations----------------------------------------------*/
@@ -694,6 +696,66 @@ void canIsrTracoHandler(void)
     IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canPhysicsNode.node, IfxCan_Interrupt_transmissionCompleted);
 }
 
+uint8 RX_message_DLC_transformer(uint8 Data_length_Code)
+{
+  uint8 Data_length = 0;
+
+  switch (Data_length_Code)
+  {
+    case IfxCan_DataLengthCode_0:
+      Data_length = 0;
+      break;
+    case IfxCan_DataLengthCode_1:
+      Data_length = 1;
+      break;
+    case IfxCan_DataLengthCode_2:
+      Data_length = 2;
+      break;
+    case IfxCan_DataLengthCode_3:
+      Data_length = 3;
+      break;
+    case IfxCan_DataLengthCode_4:
+      Data_length = 4;
+      break;
+    case IfxCan_DataLengthCode_5:
+      Data_length = 5;
+      break;
+    case IfxCan_DataLengthCode_6:
+      Data_length = 6;
+      break;
+    case IfxCan_DataLengthCode_7:
+      Data_length = 7;
+      break;
+    case IfxCan_DataLengthCode_8:
+      Data_length = 8;
+      break;
+    case IfxCan_DataLengthCode_12:
+      Data_length = 12;          /* 9*4 - 24  */
+      break;
+    case IfxCan_DataLengthCode_16:
+      Data_length = 16;          /* 10*4 - 24 */
+      break;
+    case IfxCan_DataLengthCode_20:
+      Data_length = 20;          /* 11*4 - 24 */
+      break;
+    case IfxCan_DataLengthCode_24:
+      Data_length = 24;          /* 12*4 - 24 */
+      break;
+    case IfxCan_DataLengthCode_32:
+      Data_length = 32;          /* 13*16 - 176 */
+      break;
+    case IfxCan_DataLengthCode_48:
+      Data_length = 48;          /* 14*16 - 176 */
+      break;
+    case IfxCan_DataLengthCode_64:
+      Data_length = 64;          /* 15*16 - 176 */
+      break;
+    default:
+      break;
+  }
+  return Data_length;
+}
+
 /* Interrupt Service Routine (ISR) called once the RX interrupt has been generated.
  * Compares the content of the received CAN message with the content of the transmitted CAN message
  * and in case of success, turns on the LED2 to indicate successful CAN message reception.
@@ -702,30 +764,36 @@ void canIsrReintHandler(void)
 {
   uint8 NDAT_Counter = 0;
   RET_TYPE New_message_or_not = 0;
-  if(MCMCAN0_Node0.canPhysicsNode.node->IR.B.DRX)    // \brief CAN0 Node0 have received message.
-  {
-    NDAT_Counter = 0;
-    /* Clear the "Message stored to Dedicated RX Buffer" interrupt flag */
-    IfxCan_Node_clearInterruptFlag(MCMCAN0_Node0.canPhysicsNode.node, IfxCan_Interrupt_messageStoredToDedicatedRxBuffer);
+  size_t MCMCAN_Node_Count = 0;
+  RX_Pdu_type * RX_PDU_Hash_temp = NULL;
+  uint32 * message_ID_Ptr_temp = NULL;
 
-    for (NDAT_Counter = 0; NDAT_Counter < mcmcan0_node0_filter_config_number[0]; NDAT_Counter++)
+  /* poll every node */
+  for (MCMCAN_Node_Count = 0; MCMCAN_Node_Count < Node_Total_Number; MCMCAN_Node_Count++)
+  {
+    McmcanType * McmcanType_temp_Ptr = McmCan_Node_Struct[MCMCAN_Node_Count].MCMCAN_Node_Ptr;
+
+    if(McmcanType_temp_Ptr->canPhysicsNode.node->IR.B.DRX)    // \brief CAN0 Node0 have received message.
     {
-      New_message_or_not = IfxCan_Node_isRxBufferNewDataUpdated(MCMCAN0_Node0.canPhysicsNode.node, NDAT_Counter);
-      if (New_message_or_not == RTE_OK)
+      NDAT_Counter = 0;
+      /* Clear the "Message stored to Dedicated RX Buffer" interrupt flag */
+      IfxCan_Node_clearInterruptFlag(McmcanType_temp_Ptr->canPhysicsNode.node, IfxCan_Interrupt_messageStoredToDedicatedRxBuffer);
+
+      /* poll every NDAT rigister of the node */
+      for (NDAT_Counter = 0; NDAT_Counter < mcmcan0_node0_filter_config_number[0]; NDAT_Counter++)
       {
-        /* Read the received CAN message */
-        IfxCan_Can_readMessage(&MCMCAN0_Node0.canPhysicsNode, (MCMCAN0_Node0.rxMsg + NDAT_Counter), MCMCAN0_Node0.rxData);
+        /* check if any new message arrive in this filter*/
+        New_message_or_not = IfxCan_Node_isRxBufferNewDataUpdated(McmcanType_temp_Ptr->canPhysicsNode.node, NDAT_Counter);
+        if (New_message_or_not == RTE_OK)
+        {
+          /* Read the received CAN message */
+          IfxCan_Can_readMessage(&McmcanType_temp_Ptr->canPhysicsNode, (McmcanType_temp_Ptr->rxMsg + NDAT_Counter), McmcanType_temp_Ptr->rxData);
+          /* find the matched pdu from hash */
+          message_ID_Ptr_temp = &((McmcanType_temp_Ptr->rxMsg + NDAT_Counter)->messageId);
+          HASH_FIND_INT(MCMCAN_Node_RX_Hash_array[MCMCAN_Node_Count], message_ID_Ptr_temp, RX_PDU_Hash_temp);
+          memcpy(RX_PDU_Hash_temp->PDU_Data, McmcanType_temp_Ptr->rxData, RX_message_DLC_transformer((McmcanType_temp_Ptr->rxMsg + NDAT_Counter)->dataLengthCode));
+        }
       }
     }
   }
-  else if (CAN0_IR1.B.DRX == 1)    // \brief CAN0 Node1 have received message.
-  {
-    while (1)
-    {
-      /* code */
-      //it should not to be here forever
-    }
-    
-  }
-    
 }

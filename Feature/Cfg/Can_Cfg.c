@@ -1709,6 +1709,36 @@ uint8 mcmcan0_node0_filter_config_number[Node_Total_Number] = {
   MCMCAN2_NODE3_FILTER_CONFIG_NUMBER,
 };
 
+uint8 mcmcan0_node0_RX_PDU_config_number[Node_Total_Number] = {
+  McmCan0_Node0_RX_PDU_COUNT,
+  McmCan0_Node1_RX_PDU_COUNT,
+  McmCan0_Node2_RX_PDU_COUNT,
+  McmCan0_Node3_RX_PDU_COUNT,
+  McmCan1_Node0_RX_PDU_COUNT,
+  McmCan1_Node1_RX_PDU_COUNT,
+  McmCan1_Node2_RX_PDU_COUNT,
+  McmCan1_Node3_RX_PDU_COUNT,
+  McmCan2_Node0_RX_PDU_COUNT,
+  McmCan2_Node1_RX_PDU_COUNT,
+  McmCan2_Node2_RX_PDU_COUNT,
+  McmCan2_Node3_RX_PDU_COUNT,
+};
+
+uint8 mcmcan0_node0_TX_PDU_config_number[Node_Total_Number] = {
+  McmCan0_Node0_TX_PDU_COUNT,
+  McmCan0_Node1_TX_PDU_COUNT,
+  McmCan0_Node2_TX_PDU_COUNT,
+  McmCan0_Node3_TX_PDU_COUNT,
+  McmCan1_Node0_TX_PDU_COUNT,
+  McmCan1_Node1_TX_PDU_COUNT,
+  McmCan1_Node2_TX_PDU_COUNT,
+  McmCan1_Node3_TX_PDU_COUNT,
+  McmCan2_Node0_TX_PDU_COUNT,
+  McmCan2_Node1_TX_PDU_COUNT,
+  McmCan2_Node2_TX_PDU_COUNT,
+  McmCan2_Node3_TX_PDU_COUNT,
+};
+
 IfxCan_Filter * MCMCAN_Node_CanFilter_Ptr_array[Node_Total_Number] = {
   MCMCAN0_Node0_CanFilter,
   NULL,

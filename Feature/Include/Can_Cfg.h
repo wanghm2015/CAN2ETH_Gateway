@@ -685,6 +685,7 @@ Public License instead of this License.  But first, please read
 #include "IfxPort.h"  
 #include "Platform_Types.h"
 #include "can2eth_types.h"
+#include "ThirdParty/uthash/src/uthash.h"
 
 /*********************************************************************************************************************/
 /*-----------------------------------------------------Macros--------------------------------------------------------*/
@@ -779,6 +780,7 @@ typedef struct
     uint32 Can_Id;
     uint8 PDU_Length;
     uint32 PDU_Data[CAN_DRIVER_BUFFER_LENGTH];
+    UT_hash_handle hh;
 } TX_Pdu_type;
 
 typedef struct
@@ -786,6 +788,7 @@ typedef struct
     uint32 Can_Id;
     uint8 PDU_Length;
     uint32 PDU_Data[CAN_DRIVER_BUFFER_LENGTH];
+    UT_hash_handle hh;
 } RX_Pdu_type;
 
 /*
@@ -826,5 +829,7 @@ extern IfxCan_Filter MCMCAN0_Node0_CanFilter[MCMCAN0_NODE0_FILTER_CONFIG_NUMBER]
 extern uint8 mcmcan0_node0_filter_config_number[Node_Total_Number];
 extern IfxCan_Filter * MCMCAN_Node_CanFilter_Ptr_array[Node_Total_Number];
 extern MCMCAN_Node_Struct_type McmCan_Node_Struct[Node_Total_Number];
+extern uint8 mcmcan0_node0_RX_PDU_config_number[Node_Total_Number];
+extern uint8 mcmcan0_node0_TX_PDU_config_number[Node_Total_Number];
 
 #endif
